@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<TcSmProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4024.12">
+	<Project ProjectGUID="{A13D56E9-29FC-4D02-9CE0-8973AE81FCF1}" Target64Bit="true" ShowHideConfigurations="#x306">
+		<System>
+			<Tasks>
+				<Task Id="3" Priority="20" CycleTime="100000" AmsPort="350" AdtTasks="true">
+					<Name>PlcTask</Name>
+				</Task>
+				<Task Id="6" Priority="3" CycleTime="10000" AmsPort="351" AdtTasks="true">
+					<Name>PiezoDriver</Name>
+				</Task>
+				<Task Id="7" Priority="1" CycleTime="20000" AmsPort="352" AdtTasks="true">
+					<Name>SerialIO</Name>
+				</Task>
+			</Tasks>
+		</System>
+		<Motion>
+			<NC File="NC.xti"/>
+		</Motion>
+		<Plc>
+			<Project GUID="{C8382CB3-82F6-450E-8CC6-B9B3774F7B56}" Name="xrt_optics" PrjFilePath="xrt_optics\xrt_optics.plcproj" TmcFilePath="xrt_optics\xrt_optics.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2">
+					<Name>xrt_optics Instance</Name>
+					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
+				</Instance>
+			</Project>
+		</Plc>
+	</Project>
+</TcSmProject>
