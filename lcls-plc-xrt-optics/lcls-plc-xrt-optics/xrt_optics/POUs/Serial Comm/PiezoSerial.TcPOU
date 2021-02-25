@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="PiezoSerial" Id="{04ed9258-9624-4f29-9f34-d3e5ff9995d6}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PiezoSerial
+VAR
+	//PI Serial
+	fbE621SerialDriver_XRTM1 : FB_PI_E621_SerialDriver;
+	rtInitParams_XRTM1	:	R_TRIG;
+	tonTimeoutRst_XRTM1	: TON := (PT:=T#2S); //For timeout reset
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[//Piezo E-621
+///////////////////////
+fbE621SerialDriver_XRTM1.i_xExecute := TRUE;
+fbE621SerialDriver_XRTM1.i_xExecute R= fbE621SerialDriver_XRTM1.q_xDone;
+fbE621SerialDriver_XRTM1(iq_stPiezoAxis:= GVL_XRTM1.XRTM1_Pitch.Piezo,
+		                iq_stSerialRXBuffer:= Serial_RXBuffer_XRTM1,
+		                iq_stSerialTXBuffer:= Serial_TXBuffer_XRTM1);
+]]></ST>
+    </Implementation>
+    <LineIds Name="PiezoSerial">
+      <LineId Id="3" Count="6" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

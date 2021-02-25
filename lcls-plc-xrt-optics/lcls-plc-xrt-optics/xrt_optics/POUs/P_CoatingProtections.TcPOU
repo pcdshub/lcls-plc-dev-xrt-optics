@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="P_CoatingProtections" Id="{3eac67bd-ceb1-46f6-9fb2-5e3c0612d4cd}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM P_CoatingProtections
+VAR
+    	fbStripProtXRTMR1 : FB_MirrorTwoCoatingProtection := (
+            sDevName := 'XRTMR1',
+            nUpperCoatingBoundary := 13300000,
+            nUpperCoatingBitmask := 2#0000_0011_1111_1111,
+            sUpperCoatingType := 'B4C',
+            nLowerCoatingBoundary := 11800000,
+            nLowerCoatingBitMask := 2#1111_1110_0000_0000,
+            sLowerCoatingType := 'B4C/Ni');
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fbStripProtXRTMR1(
+    nCurrentEncoderCount := MAIN.nEncCntYupXRTM1,
+    neVRange := PMPS.PMPS_GVL.stCurrentBeamParameters.neVRange,
+    FFO := GVL_PMPS.g_FastFaultOutput1);]]></ST>
+    </Implementation>
+    <LineIds Name="P_CoatingProtections">
+      <LineId Id="3" Count="3" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
