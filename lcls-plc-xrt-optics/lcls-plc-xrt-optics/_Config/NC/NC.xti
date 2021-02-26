@@ -18,6 +18,7 @@
 		</SvbTask>
 		<AxisFolder Name="XRTM1"/>
 		<AxisFolder Name="M2"/>
+		<AxisFolder Name="M3"/>
 		<Axis File="XRTM1-Yup.xti" Id="1"/>
 		<Axis File="XRTM1-Ydwn.xti" Id="2"/>
 		<Axis File="XRTM1-Xup.xti" Id="3"/>
@@ -30,5 +31,11 @@
 		<Axis File="M2 X2.xti" Id="10"/>
 		<Axis File="M2 P.xti" Id="11"/>
 		<Axis File="M2 B.xti" Id="17"/>
+		<Axis File="M3 Y1.xti" Id="12"/>
+		<Axis File="M3 Y2.xti" Id="13"/>
+		<Axis File="M3 X1.xti" Id="14"/>
+		<Axis File="M3 X2.xti" Id="15"/>
+		<Axis File="M3 P.xti" Id="16"/>
+		<Axis File="M3 B.xti" Id="18"/>
 	</NC>
 </TcSmItem>
