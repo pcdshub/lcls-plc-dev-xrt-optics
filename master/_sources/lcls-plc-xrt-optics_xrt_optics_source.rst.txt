@@ -1,0 +1,478 @@
+
+
+DUTs
+----
+
+
+GVLs
+----
+
+
+GVL_COM_Buffers
+^^^^^^^^^^^^^^^
+
+::
+
+    VAR_GLOBAL
+    	// XRTM1
+    	Serial_RXBuffer_XRTM1 : ComBuffer;
+    	Serial_TXBuffer_XRTM1 : ComBuffer;
+    END_VAR
+
+
+
+
+GVL_PMPS
+^^^^^^^^
+
+::
+
+    {attribute 'qualified_only'}
+    VAR_GLOBAL
+    	// Implementation of the FFO
+    	{attribute 'pytmc' := '
+    		pv: PLC:LFE:OPTICS:FFO:01
+    	'}
+    	{attribute 'TcLinkTo' := '.q_xFastFaultOut:=TIIB[PMPS_FFO]^Channel 1^Output'}
+    	g_FastFaultOutput1 : FB_HardwareFFOutput := (bAutoReset:=TRUE);
+
+    	{attribute 'pytmc' := '
+    		pv: PLC:LFE:OPTICS:FFO:02
+    	'}
+    	{attribute 'TcLinkTo' := '.q_xFastFaultOut:=TIIB[PMPS_FFO]^Channel 2^Output'}
+    	g_FastFaultOutput2 : FB_HardwareFFOutput := (bAutoReset:=TRUE);
+
+    	{attribute 'pytmc' := '
+    		pv: PLC:LFE:OPTICS:ARB:01
+    	'}
+    	g_fbArbiter1 : FB_Arbiter(1);
+
+    	{attribute 'pytmc' := '
+    		pv: PLC:LFE:OPTICS:ARB:02
+    	'}
+    	g_fbArbiter2 : FB_Arbiter(2);
+    END_VAR
+
+
+
+
+GVL_SerialIO
+^^^^^^^^^^^^
+
+::
+
+    VAR_GLOBAL
+    	//Better have your inputs and outputs!
+    	// XRTM1
+    	Serial_stComIn_XRTM1 AT %I* : EL6inData22B; // XRTM1 In Serial Comm Array
+    	Serial_stComOut_XRTM1 AT %Q* : EL6outData22B; // XRTM1 Out Serual Comm Array
+    END_VAR
+
+
+
+
+GVL_XRTM1
+^^^^^^^^^
+
+::
+
+    {attribute 'qualified_only'}
+    VAR_GLOBAL
+    	// Pitch Mechanism:
+    	{attribute 'TcLinkTo' := '.diEncCnt:=TIIB[EL5042_XRTM1_PitchBender]^FB Inputs Channel 1^Position'}
+    	XRTM1_Pitch : HOMS_PitchMechanism := (ReqPosLimHi := 120.0,
+    		                                 ReqPosLimLo := -182.0,
+    		                                 diEncPosLimHi := 8662020,
+    		                                 diEncPosLimLo := 8507095);
+    END_VAR
+
+
+
+
+GVL_XRTM1_Constants
+^^^^^^^^^^^^^^^^^^^
+
+::
+
+    {attribute 'qualified_only'}
+    VAR_GLOBAL CONSTANT
+    	// Encoder reference values in counts = nm
+    	// Enc Ref Vals from alignment 2020-5-27
+    	nYUP_ENC_REF : ULINT := 16171800;
+    	nYDWN_ENC_REF : ULINT := 14866900;
+    	nXUP_ENC_REF : ULINT := 24901730;
+    	nXDWN_ENC_REF : ULINT := 22921460;
+    END_VAR
+
+
+
+
+POUs
+----
+
+
+Main
+^^^^
+
+::
+
+    PROGRAM Main
+    VAR
+    	// XRTM1
+    	// Motors
+    	{attribute 'TcLinkTo' := '.bLimitForwardEnable:=TIIB[EL7041-1000_XRTM1_Yup]^STM Status^Status^Digital input 1;
+                                  .bLimitBackwardEnable:=TIIB[EL7041-1000_XRTM1_Yup]^STM Status^Status^Digital input 2'}
+    	{attribute 'pytmc' := '
+    		pv: XRTMR1:HOMS:MMS:YUP
+    	'}
+    	M1 : DUT_MotionStage := (fVelocity:=200.0, nEnableMode:=ENUM_StageEnableMode.ALWAYS, bPowerSelf:=TRUE); // XRTM1 Yup
+    	fbMotionStage_m1 : FB_MotionStage;
+
+    	{attribute 'TcLinkTo' := '.bLimitForwardEnable:=TIIB[EL7041-1000_XRTM1_Ydwn]^STM Status^Status^Digital input 1;
+                                  .bLimitBackwardEnable:=TIIB[EL7041-1000_XRTM1_Ydwn]^STM Status^Status^Digital input 2'}
+    	{attribute 'pytmc' := '
+    		pv: XRTMR1:HOMS:MMS:YDWN
+    	'}
+    	M2 : DUT_MotionStage := (fVelocity:=200.0, nEnableMode:=ENUM_StageEnableMode.ALWAYS, bPowerSelf:=TRUE); // XRTM1 Ydwn
+    	fbMotionStage_m2 : FB_MotionStage;
+
+    	{attribute 'TcLinkTo' := '.bLimitForwardEnable:=TIIB[EL7041-1000_XRTM1_Xup]^STM Status^Status^Digital input 1;
+                                  .bLimitBackwardEnable:=TIIB[EL7041-1000_XRTM1_Xup]^STM Status^Status^Digital input 2'}
+    	{attribute 'pytmc' := '
+    		pv: XRTMR1:HOMS:MMS:XUP
+    	'}
+    	M3 : DUT_MotionStage := (fVelocity:=1000.0, nEnableMode:=ENUM_StageEnableMode.ALWAYS, bPowerSelf:=TRUE); // XRTM1 Xup
+    	fbMotionStage_m3 : FB_MotionStage;
+
+    	{attribute 'TcLinkTo' := '.bLimitForwardEnable:=TIIB[EL7041-1000_XRTM1_Xdwn]^STM Status^Status^Digital input 1;
+                                  .bLimitBackwardEnable:=TIIB[EL7041-1000_XRTM1_Xdwn]^STM Status^Status^Digital input 2'}
+    	{attribute 'pytmc' := '
+    		pv: XRTMR1:HOMS:MMS:XDWN
+    	'}
+    	M4 : DUT_MotionStage := (fVelocity:=1000.0, nEnableMode:=ENUM_StageEnableMode.ALWAYS, bPowerSelf:=TRUE); // XRTM1 Xdwn
+    	fbMotionStage_m4 : FB_MotionStage;
+
+    	{attribute 'TcLinkTo' := '.bLimitForwardEnable:=TIIB[EL7041-1000_XRTM1_PitchCoarse]^STM Status^Status^Digital input 1;
+                                  .bLimitBackwardEnable:=TIIB[EL7041-1000_XRTM1_PitchCoarse]^STM Status^Status^Digital input 2'}
+    	{attribute 'pytmc' := '
+    		pv: XRTMR1:HOMS:MMS:PITCH
+    	'}
+    	M5 : DUT_MotionStage := (fVelocity:=150.0); // XRTM1 Pitch Stepper
+
+    	{attribute 'TcLinkTo' := '.bLimitForwardEnable:=TIIB[EL7041-1000_XRTM1_Bender]^STM Status^Status^Digital input 1;
+                                  .bLimitBackwardEnable:=TIIB[EL7041-1000_XRTM1_Bender]^STM Status^Status^Digital input 2'}
+    	{attribute 'pytmc' := '
+    		pv: XRTMR1:HOMS:MMS:BENDER
+    	'}
+    	M6 : DUT_MotionStage := (fVelocity:=150.0, nEnableMode:=ENUM_StageEnableMode.ALWAYS, bPowerSelf:=TRUE); // XRTM1 Bender
+    	fbMotionStage_m6 : FB_MotionStage;
+
+    	{attribute 'TcLinkTo' := '.fbRunHOMS.bSTOEnable1:=TIIB[EL1004_XRTM1_STO]^Channel 1^Input;
+                                  .fbRunHOMS.bSTOEnable2:=TIIB[EL1004_XRTM1_STO]^Channel 2^Input;
+    	                          .fbRunHOMS.stYupEnc.Count:=TIIB[EL5042_XRTM1_Yupdwn]^FB Inputs Channel 1^Position;
+    	                          .fbRunHOMS.stYdwnEnc.Count:=TIIB[EL5042_XRTM1_Yupdwn]^FB Inputs Channel 2^Position;
+    	                          .fbRunHOMS.stXupEnc.Count:=TIIB[EL5042_XRTM1_Xupdwn]^FB Inputs Channel 1^Position;
+    	                          .fbRunHOMS.stXdwnEnc.Count:=TIIB[EL5042_XRTM1_Xupdwn]^FB Inputs Channel 2^Position'}
+    	{attribute 'pytmc' := '
+    		pv: XRTMR1:HOMS
+    	'}
+    	XRTM1 : DUT_HOMS;
+
+    	// Encoder Arrays/RMS Watch:
+    	{attribute 'pytmc' := '
+    		pv: XRTMR1:HOMS:ENC:Y
+    	'}
+    	fbYRMSErrorXRTM1 : FB_RMSWatch;
+    	fMaxYRMSErrorXRTM1 : LREAL;
+    	fMinYRMSErrorXRTM1 : LREAL;
+
+    	{attribute 'pytmc' := '
+    		pv: XRTMR1:HOMS:ENC:X
+    	'}
+    	fbXRMSErrorXRTM1 : FB_RMSWatch;
+    	fMaxXRMSErrorXRTM1 : LREAL;
+    	fMinXRMSErrorXRTM1 : LREAL;
+
+    	{attribute 'pytmc' := '
+    		pv: XRTMR1:HOMS:ENC:PITCH
+    	'}
+    	fbPitchRMSErrorXRTM1 : FB_RMSWatch;
+    	fMaxPitchRMSErrorXRTM1 : LREAL;
+    	fMinPitchRMSErrorXRTM1 : LREAL;
+
+    	{attribute 'pytmc' := '
+    		pv: XRTMR1:HOMS:ENC:BENDER
+    	'}
+    	fbBenderRMSErrorXRTM1 : FB_RMSWatch;
+    	fMaxBenderRMSErrorXRTM1 : LREAL;
+    	fMinBenderRMSErrorXRTM1 : LREAL;
+
+    	// Pitch Control
+    	fbXRTM1PitchControl : FB_PitchControl;
+    	bXRTM1PitchDone : BOOL;
+    	bXRTM1PitchBusy : BOOL;
+
+    	// Bender Control
+    	fbBenderXRTM1 : FB_Bender;
+
+    	// Raw Encoder Counts
+    	{attribute 'pytmc' := '
+    		pv: XRTMR1:HOMS:ENC:YUP:CNT
+    		field: EGU cnt
+    		io: i
+    	'}
+    	nEncCntYupXRTM1 : UDINT;
+    	{attribute 'pytmc' := '
+    		pv: XRTMR1:HOMS:ENC:YDWN:CNT
+    		field: EGU cnt
+    		io: i
+    	'}
+    	nEncCntYdwnXRTM1 : UDINT;
+    	{attribute 'pytmc' := '
+    		pv: XRTMR1:HOMS:ENC:XUP:CNT
+    		field: EGU cnt
+    		io: i
+    	'}
+    	nEncCntXupXRTM1 : UDINT;
+    	{attribute 'pytmc' := '
+    		pv: XRTMR1:HOMS:ENC:XDWN:CNT
+    		field: EGU cnt
+    		io: i
+    	'}
+    	nEncCntXdwnXRTM1 : UDINT;
+    	{attribute 'pytmc' := '
+    		pv: XRTMR1:HOMS:ENC:PITCH:CNT
+    		field: EGU cnt
+    		io: i
+    	'}
+    	nEncCntPitchXRTM1 : UDINT;
+
+    	// Encoder Reference Values
+    	{attribute 'pytmc' := '
+    		pv: XRTMR1:HOMS:ENC:YUP:REF
+    		field: EGU cnt
+    		io: i
+    	'}
+    	nEncRefYupXRTM1 : UDINT;
+    	{attribute 'pytmc' := '
+    		pv: XRTMR1:HOMS:ENC:YDWN:REF
+    		field: EGU cnt
+    		io: i
+    	'}
+    	nEncRefYdwnXRTM1 : UDINT;
+    	{attribute 'pytmc' := '
+    		pv: XRTMR1:HOMS:ENC:XUP:REF
+    		field: EGU cnt
+    		io: i
+    	'}
+    	nEncRefXupXRTM1 : UDINT;
+    	{attribute 'pytmc' := '
+    		pv: XRTMR1:HOMS:ENC:XDWN:REF
+    		field: EGU cnt
+    		io: i
+    	'}
+    	nEncRefXdwnXRTM1 : UDINT;
+    	{attribute 'pytmc' := '
+    		pv: XRTMR1:HOMS:ENC:PITCH:REF
+    		field: EGU cnt
+    		io: i
+    	'}
+    	nEncRefPitchXRTM1 : UDINT;
+    	mcReadParameterPitchXRTM1 : MC_ReadParameter;
+    	fEncRefPitchXRTM1_urad : LREAL; // Current Pitch encoder offset in urad
+
+
+    	// PMPS arbiter interface
+    	fbArbiterIO : FB_SubSysToArbiter_IO;
+    	
+    	// Common
+    	fEncLeverArm_mm : LREAL := 513.0;
+    	// Logging
+    	fbLogHandler : FB_LogHandler;
+
+    END_VAR
+    // XRTM1
+    XRTM1.fbRunHOMS(stYup:=M1,
+                   stYdwn:=M2,
+                   stXup:=M3,
+                   stXdwn:=M4,
+                   stPitch:=M5,
+    	           nYupEncRef:=GVL_XRTM1_Constants.nYUP_ENC_REF,
+                   nYdwnEncRef:=GVL_XRTM1_Constants.nYDWN_ENC_REF,
+                   nXupEncRef:=GVL_XRTM1_Constants.nXUP_ENC_REF,
+                   nXdwnEncRef:=GVL_XRTM1_Constants.nXDWN_ENC_REF,
+    			   bExecuteCoupleY:=XRTM1.bExecuteCoupleY,
+                   bExecuteCoupleX:=XRTM1.bExecuteCoupleX,
+    			   bExecuteDecoupleY:=XRTM1.bExecuteDecoupleY,
+                   bExecuteDecoupleX:=XRTM1.bExecuteDecoupleX,
+                   bGantryAlreadyCoupledY=>XRTM1.bGantryAlreadyCoupledY,
+                   bGantryAlreadyCoupledX=>XRTM1.bGantryAlreadyCoupledX,
+                   nCurrGantryY=>XRTM1.nCurrGantryY,
+                   nCurrGantryX=>XRTM1.nCurrGantryX);
+    fbBenderXRTM1(stBender:=M6,
+    	         bSTOEnable1:=XRTM1.fbRunHOMS.bSTOEnable1,
+    		     bSTOEnable2:=XRTM1.fbRunHOMS.bSTOEnable2);
+    // No slave motion through Epics
+    M2.bExecute := FALSE; // XRTM1-Ydwn
+    M4.bExecute := FALSE; // XRTM1-Xdwn
+
+    // Convert nCurrGantry to um (smaller number) to read out in epics
+    XRTM1.fCurrGantryY_um := LINT_TO_REAL(XRTM1.nCurrGantryY) / 1000.0;
+    XRTM1.fCurrGantryX_um := LINT_TO_REAL(XRTM1.nCurrGantryX) / 1000.0;
+
+    // FB_MotionStage's for non-piezo axes
+    fbMotionStage_m1(stMotionStage:=M1);
+    fbMotionStage_m2(stMotionStage:=M2);
+    fbMotionStage_m3(stMotionStage:=M3);
+    fbMotionStage_m4(stMotionStage:=M4);
+    fbMotionStage_m6(stMotionStage:=M6);
+
+    // Calculate Pitch RMS Error:
+    fbYRMSErrorXRTM1(stMotionStage:=M1,
+    	            fMaxRMSError=>fMaxYRMSErrorXRTM1,
+    				fMinRMSError=>fMinYRMSErrorXRTM1);
+
+    fbXRMSErrorXRTM1(stMotionStage:=M3,
+    	            fMaxRMSError=>fMaxXRMSErrorXRTM1,
+    				fMinRMSError=>fMinXRMSErrorXRTM1);
+
+    fbPitchRMSErrorXRTM1(stMotionStage:=M5,
+    	                fMaxRMSError=>fMaxPitchRMSErrorXRTM1,
+    					fMinRMSError=>fMinPitchRMSErrorXRTM1);
+
+    fbBenderRMSErrorXRTM1(stMotionStage:=M6,
+    	                 fMaxRMSError=>fMaxBenderRMSErrorXRTM1,
+    					 fMinRMSError=>fMinBenderRMSErrorXRTM1);
+    // Pitch Control
+    fbXRTM1PitchControl(Pitch:=GVL_XRTM1.XRTM1_Pitch,
+    				   Stepper:=M5,
+    				   lrCurrentSetpoint:=M5.fPosition,
+                       q_bDone=>bXRTM1PitchDone,
+                       q_bBusy=>bXRTM1PitchBusy);
+    // When STO hit, need to reset SP
+    IF NOT M5.bHardwareEnable THEN
+    	M5.fPosition := M5.stAxisStatus.fActPosition;
+    END_IF
+
+    // Raw Encoder Counts For Epics
+    nEncCntYupXRTM1 := ULINT_TO_UDINT(XRTM1.fbRunHOMS.stYupEnc.Count);
+    nEncCntYdwnXRTM1 := ULINT_TO_UDINT(XRTM1.fbRunHOMS.stYdwnEnc.Count);
+    nEncCntXupXRTM1 := ULINT_TO_UDINT(XRTM1.fbRunHOMS.stXupEnc.Count);
+    nEncCntXdwnXRTM1 := ULINT_TO_UDINT(XRTM1.fbRunHOMS.stXdwnEnc.Count);
+    nEncCntPitchXRTM1 := LINT_TO_UDINT(GVL_XRTM1.XRTM1_Pitch.diEncCnt);
+
+    // Encoder Reference Values For Epics
+    nEncRefYupXRTM1 := ULINT_TO_UDINT(GVL_XRTM1_Constants.nYUP_ENC_REF);
+    nEncRefYdwnXRTM1 := ULINT_TO_UDINT(GVL_XRTM1_Constants.nYDWN_ENC_REF);
+    nEncRefXupXRTM1 := ULINT_TO_UDINT(GVL_XRTM1_Constants.nXUP_ENC_REF);
+    nEncRefXdwnXRTM1 := ULINT_TO_UDINT(GVL_XRTM1_Constants.nXDWN_ENC_REF);
+    mcReadParameterPitchXRTM1(Axis:=M5.Axis,
+    	                     Enable:=TRUE,
+    				         ParameterNumber:=MC_AxisParameter.AxisEncoderOffset,
+    				         ReadMode:=READMODE_CYCLIC,
+    				         Value=>fEncRefPitchXRTM1_urad);
+
+    nEncRefPitchXRTM1 := LREAL_TO_UDINT(ABS(fEncRefPitchXRTM1_urad) * fEncLeverArm_mm);
+
+
+    P_CoatingProtections();
+
+    // Logging
+    fbLogHandler();
+
+    // PMPS
+    GVL_PMPS.g_fbArbiter1.AddRequest(16#5, PMPS_GVL.cstFullBeam);
+    fbArbiterIO(Arbiter := GVL_PMPS.g_fbArbiter1, fbFFHWO := GVL_PMPS.g_FastFaultOutput1);
+    GVL_PMPS.g_FastFaultOutput1.Execute(i_xVeto:=);
+    GVL_PMPS.g_FastFaultOutput2.Execute(i_xVeto:=);
+
+    END_PROGRAM
+
+
+Related:
+    * `GVL_PMPS`_
+    * `GVL_XRTM1`_
+    * `GVL_XRTM1_Constants`_
+    * `P_CoatingProtections`_
+
+
+P_CoatingProtections
+^^^^^^^^^^^^^^^^^^^^
+
+::
+
+    PROGRAM P_CoatingProtections
+    VAR
+        	fbStripProtXRTMR1 : FB_MirrorTwoCoatingProtection := (
+                sDevName := 'XRTMR1',
+                nUpperCoatingBoundary := 13300000,
+                nUpperCoatingBitmask := 2#0000_0011_1111_1111,
+                sUpperCoatingType := 'B4C',
+                nLowerCoatingBoundary := 11800000,
+                nLowerCoatingBitMask := 2#1111_1110_0000_0000,
+                sLowerCoatingType := 'B4C/Ni');
+    END_VAR
+    fbStripProtXRTMR1(
+        nCurrentEncoderCount := MAIN.nEncCntYupXRTM1,
+        neVRange := PMPS.PMPS_GVL.stCurrentBeamParameters.neVRange,
+        FFO := GVL_PMPS.g_FastFaultOutput1);
+
+    END_PROGRAM
+
+
+Related:
+    * `GVL_PMPS`_
+
+
+P_Serial_Com
+^^^^^^^^^^^^
+
+::
+
+    PROGRAM P_Serial_Com
+    VAR
+    	fbSerialLineControl_EL6001_XRTM1: SerialLineControl; // XRTM1 Serial Comm Function Block
+    END_VAR
+    // These are the global IOs...don't forget to copy your data into them
+
+    (* EL6001 Serial port 0 com function *)
+    fbSerialLineControl_EL6001_XRTM1(Mode:= SERIALLINEMODE_EL6_22B,
+    						        pComIn:= ADR(Serial_stComIn_XRTM1),
+    						   	    pComOut:=ADR(Serial_stComOut_XRTM1),
+    						        SizeComIn:= SIZEOF(Serial_stComIn_XRTM1),
+    						        TxBuffer:= Serial_TXBuffer_XRTM1,
+    						        RxBuffer:= Serial_RXBuffer_XRTM1,
+    						        Error=>,
+    						        ErrorID=>);
+
+    END_PROGRAM
+
+
+
+
+PiezoSerial
+^^^^^^^^^^^
+
+::
+
+    PROGRAM PiezoSerial
+    VAR
+    	//PI Serial
+    	fbE621SerialDriver_XRTM1 : FB_PI_E621_SerialDriver;
+    	rtInitParams_XRTM1	:	R_TRIG;
+    	tonTimeoutRst_XRTM1	: TON := (PT:=T#2S); //For timeout reset
+    END_VAR
+    //Piezo E-621
+    ///////////////////////
+    fbE621SerialDriver_XRTM1.i_xExecute := TRUE;
+    fbE621SerialDriver_XRTM1.i_xExecute R= fbE621SerialDriver_XRTM1.q_xDone;
+    fbE621SerialDriver_XRTM1(iq_stPiezoAxis:= GVL_XRTM1.XRTM1_Pitch.Piezo,
+    		                iq_stSerialRXBuffer:= Serial_RXBuffer_XRTM1,
+    		                iq_stSerialTXBuffer:= Serial_TXBuffer_XRTM1);
+
+    END_PROGRAM
+
+
+Related:
+    * `GVL_XRTM1`_
+

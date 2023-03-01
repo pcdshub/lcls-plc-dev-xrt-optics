@@ -1,0 +1,29 @@
+lcls-plc-xrt-optics
+-------------------
+
+.. toctree::
+    :maxdepth: 2
+    :caption: lcls-plc-xrt-optics
+
+    lcls-plc-xrt-optics_pragmas
+    lcls-plc-xrt-optics_nc
+    lcls-plc-xrt-optics_boxes
+    lcls-plc-xrt-optics_links
+
+
+.. toctree::
+    :maxdepth: 2
+    :caption: xrt_optics
+
+    lcls-plc-xrt-optics_xrt_optics_summary
+    lcls-plc-xrt-optics_xrt_optics_epics
+    lcls-plc-xrt-optics_xrt_optics_source
+
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

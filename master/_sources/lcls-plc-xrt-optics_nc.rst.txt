@@ -1,0 +1,208 @@
+
+NC Settings
+-----------
+
+.. csv-table::
+    :header: Axis ID, Name
+    :align: center
+
+        1, XRTM1-Yup
+        2, XRTM1-Ydwn
+        3, XRTM1-Xup
+        4, XRTM1-Xdwn
+        5, XRTM1-Pitch
+        6, XRTM1-Bender
+
+
+
+Axis 1: XRTM1-Yup
+^^^^^^^^^^^^^^^^^
+
+.. csv-table::
+    :header: Setting, Value
+    :align: center
+
+    Axis ID, 1
+    Name, XRTM1-Yup
+    AxisFolder, XRTM1
+    AxisType, 1
+    CreateSymbols, true
+    Dynamic:Acceleration, 200
+    Dynamic:Deceleration, 200
+    Dynamic:DelayTime, 0.008
+    Enc:EncType, 29
+    Enc:Inc:RefSoftSyncMask, #x0000ffff
+    Enc:MaxCount, #xffffffff
+    Enc:Offset, -16171.8
+    Enc:ReferenceSystem, 1
+    Enc:ScaleFactorNumerator, 0.001
+    Enc:SoftEndMaxControl:Enable, true
+    Enc:SoftEndMaxControl:Range, 10852.77
+    Enc:SoftEndMinControl:Enable, true
+    Enc:SoftEndMinControl:Range, -12605.3
+    General:UnitName, um
+    Id, 1
+    OtherSettings:AllowMotionCmdToSlave, true
+    Velo:Maximum, 200
+
+
+
+Axis 2: XRTM1-Ydwn
+^^^^^^^^^^^^^^^^^^
+
+.. csv-table::
+    :header: Setting, Value
+    :align: center
+
+    Axis ID, 2
+    Name, XRTM1-Ydwn
+    AxisFolder, XRTM1
+    AxisType, 1
+    CreateSymbols, true
+    Dynamic:Acceleration, 200
+    Dynamic:Deceleration, 200
+    Dynamic:DelayTime, 0.008
+    Enc:EncType, 29
+    Enc:Inc:RefSoftSyncMask, #x0000ffff
+    Enc:MaxCount, #xffffffff
+    Enc:Offset, -14866.9
+    Enc:ReferenceSystem, 1
+    Enc:ScaleFactorNumerator, 0.001
+    Enc:SoftEndMaxControl:Enable, true
+    Enc:SoftEndMaxControl:Range, 10957.45
+    Enc:SoftEndMinControl:Enable, true
+    Enc:SoftEndMinControl:Range, -12700.5
+    General:UnitName, um
+    Id, 2
+    OtherSettings:AllowMotionCmdToSlave, true
+    Velo:Maximum, 200
+
+
+
+Axis 3: XRTM1-Xup
+^^^^^^^^^^^^^^^^^
+
+.. csv-table::
+    :header: Setting, Value
+    :align: center
+
+    Axis ID, 3
+    Name, XRTM1-Xup
+    AxisFolder, XRTM1
+    AxisType, 1
+    CreateSymbols, true
+    Dynamic:Acceleration, 2000
+    Dynamic:Deceleration, 2000
+    Dynamic:DelayTime, 0.008
+    Enc:EncType, 29
+    Enc:Inc:RefSoftSyncMask, #x0000ffff
+    Enc:MaxCount, #xffffffff
+    Enc:Offset, -24901.7
+    Enc:ReferenceSystem, 1
+    Enc:ScaleFactorNumerator, 0.001
+    Enc:SoftEndMaxControl:Enable, true
+    Enc:SoftEndMaxControl:Range, 1780.4
+    Enc:SoftEndMinControl:Enable, true
+    Enc:SoftEndMinControl:Range, -219.6
+    General:UnitName, um
+    Id, 3
+    OtherSettings:AllowMotionCmdToSlave, true
+    Velo:Maximum, 1000
+
+
+
+Axis 4: XRTM1-Xdwn
+^^^^^^^^^^^^^^^^^^
+
+.. csv-table::
+    :header: Setting, Value
+    :align: center
+
+    Axis ID, 4
+    Name, XRTM1-Xdwn
+    AxisFolder, XRTM1
+    AxisType, 1
+    CreateSymbols, true
+    Dynamic:Acceleration, 2000
+    Dynamic:Deceleration, 2000
+    Dynamic:DelayTime, 0.008
+    Enc:EncType, 29
+    Enc:Inc:RefSoftSyncMask, #x0000ffff
+    Enc:MaxCount, #xffffffff
+    Enc:Offset, -22921.5
+    Enc:ReferenceSystem, 1
+    Enc:ScaleFactorNumerator, 0.001
+    Enc:SoftEndMaxControl:Enable, true
+    Enc:SoftEndMaxControl:Range, 1773.4
+    Enc:SoftEndMinControl:Enable, true
+    Enc:SoftEndMinControl:Range, -327.8
+    General:UnitName, um
+    Id, 4
+    OtherSettings:AllowMotionCmdToSlave, true
+    Velo:Maximum, 1000
+
+
+
+Axis 5: XRTM1-Pitch
+^^^^^^^^^^^^^^^^^^^
+
+.. csv-table::
+    :header: Setting, Value
+    :align: center
+
+    Axis ID, 5
+    Name, XRTM1-Pitch
+    AxisFolder, XRTM1
+    AxisType, 1
+    CreateSymbols, true
+    Dynamic:Acceleration, 390
+    Dynamic:Deceleration, 390
+    Dynamic:DelayTime, 0.008
+    Enc:EncType, 29
+    Enc:Inc:RefSoftSyncMask, #x0000ffff
+    Enc:MaxCount, #xffffffff
+    Enc:Offset, -16765.03
+    Enc:ReferenceSystem, 1
+    Enc:ScaleFactorNumerator, 0.001949317739
+    Enc:SoftEndMaxControl:Enable, true
+    Enc:SoftEndMaxControl:Range, 120
+    Enc:SoftEndMinControl:Enable, true
+    Enc:SoftEndMinControl:Range, -182
+    General:UnitName, urad
+    Id, 5
+    OtherSettings:AllowMotionCmdToSlave, true
+    Velo:Maximum, 150
+
+
+
+Axis 6: XRTM1-Bender
+^^^^^^^^^^^^^^^^^^^^
+
+.. csv-table::
+    :header: Setting, Value
+    :align: center
+
+    Axis ID, 6
+    Name, XRTM1-Bender
+    AxisFolder, XRTM1
+    AxisType, 1
+    CreateSymbols, true
+    Dynamic:Acceleration, 150
+    Dynamic:Deceleration, 150
+    Dynamic:DelayTime, 0.008
+    Enc:EncType, 29
+    Enc:Inc:RefSoftSyncMask, #x0000ffff
+    Enc:MaxCount, #xffffffff
+    Enc:Offset, -4270000.1
+    Enc:ReferenceSystem, 1
+    Enc:ScaleFactorNumerator, 0.001
+    Enc:SoftEndMaxControl:Enable, true
+    Enc:SoftEndMaxControl:Range, 8149.9
+    Enc:SoftEndMinControl:Enable, true
+    Enc:SoftEndMinControl:Range, -1100.1
+    General:UnitName, um
+    Id, 6
+    OtherSettings:AllowMotionCmdToSlave, true
+    Velo:Maximum, 150
+
+

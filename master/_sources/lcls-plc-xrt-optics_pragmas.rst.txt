@@ -1,0 +1,21 @@
+
+Pragmas
+-------
+
+.. csv-table::
+    :header: PLC Name, Total Pragmas, Errors
+    :align: center
+
+    :ref:`xrt_optics <xrt_optics_overview_pragmas>`, 38, 0
+
+
+.. _xrt_optics_overview_pragmas:
+
+
+xrt_optics
+^^^^^^^^^^
+
+Total pragmas found: 38
+Total linter errors: 0
+
+
